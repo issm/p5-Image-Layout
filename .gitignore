@@ -1,0 +1,10 @@
+MANIFEST
+Build
+Image-Layout-0.01.tar.gz
+MANIFEST.bak
+META.yml
+Makefile.PL
+_build/
+blib/
+MYMETA.json
+MYMETA.yml
