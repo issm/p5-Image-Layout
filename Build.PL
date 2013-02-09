@@ -8,7 +8,7 @@ my $builder = Module::Build->new(
     license             => 'perl',
     dist_author         => q{IWATA, Susumu <issmxx@gmail.com>},
     dist_version_from   => 'lib/Image/Layout.pm',
-    release_status      => 'stable',
+    #release_status      => 'stable',
     configure_requires => {
         'Module::Build' => 0,
     },

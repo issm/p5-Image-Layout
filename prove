@@ -1,0 +1,15 @@
+#!/bin/bash
+BASEDIR=$(cd $(dirname $0) && pwd)
+
+CD="cd $BASEDIR"
+echo "[35m$CD[0m"
+eval $CD
+
+TESTDIR="t"
+if [ "$RELEASE_TESTING" = "1" ]; then
+    TESTDIR="$TESTDIRS xt"
+fi
+
+PROVE="RELEASE_TESTING=$RELEASE_TESTING /usr/bin/env prove -Ilib -PPretty -rcv $TESTDIR"
+echo "[35m$PROVE[0m"
+eval $PROVE

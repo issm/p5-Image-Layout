@@ -1,20 +1,22 @@
 package Image::Layout;
-
 use 5.008;
 use strict;
-use warnings FATAL => 'all';
+use warnings;
+
+our $VERSION = '0.00_01';
+
+sub new {
+    my ($class, %params) = @_;
+    my $self = bless {}, $class;
+    return $self;
+}
+
+1;
+__END__
 
 =head1 NAME
 
 Image::Layout - The great new Image::Layout!
-
-=head1 VERSION
-
-Version 0.01
-
-=cut
-
-our $VERSION = '0.01';
 
 
 =head1 SYNOPSIS
@@ -28,38 +30,24 @@ Perhaps a little code snippet.
     my $foo = Image::Layout->new();
     ...
 
-=head1 EXPORT
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+=head1 METHODS
 
-=head1 SUBROUTINES/METHODS
+=head2 new
 
-=head2 function1
+...
 
-=cut
-
-sub function1 {
-}
-
-=head2 function2
-
-=cut
-
-sub function2 {
-}
 
 =head1 AUTHOR
 
 IWATA, Susumu, C<< <issmxx at gmail.com> >>
+
 
 =head1 BUGS
 
 Please report any bugs or feature requests to C<bug-image-layout at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Image-Layout>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-
 
 
 =head1 SUPPORT
@@ -107,5 +95,3 @@ See L<http://dev.perl.org/licenses/> for more information.
 
 
 =cut
-
-1; # End of Image::Layout
