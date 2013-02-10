@@ -3,7 +3,21 @@ use strict;
 use warnings FATAL => 'all';
 use Module::Build;
 
-my $builder = Module::Build->new(
+my $builder = Module::Build->subclass(
+    code => q{
+        # run prove
+        sub ACTION_test {
+            my $self = shift;
+            my $tests = $self->find_test_files;
+
+            require App::Prove;
+            my $prove = App::Prove->new();
+            #$prove->process_args('-l', '-r', @$tests);
+            $prove->process_args('-l', '-r', 't');
+            $prove->run();
+        }
+    }
+)->new(
     module_name         => 'Image::Layout',
     license             => 'perl',
     dist_author         => q{IWATA, Susumu <issmxx@gmail.com>},
@@ -14,10 +28,17 @@ my $builder = Module::Build->new(
     },
     build_requires => {
         'Test::More' => 0,
+        'Test::LeakTrace' => '0.14',
     },
     requires => {
-        #'ABC'              => 1.6,
-        #'Foo::Bar::Module' => 5.0401,
+        'Class::Accessor::Lite' => '0.05',
+        'Class::Load'           => '0.20',
+        'Data::Validator'       => '1.02',
+        'MouseX::Types'         => '0.06',
+        'Test::Deep'            => '0.110',
+        'Try::Tiny'             => '0.12',
+        'Furl'                  => '2.03',
+        'Image::Size'           => '3.232',
     },
     add_to_cleanup     => [ 'Image-Layout-*' ],
     create_makefile_pl => 'traditional',

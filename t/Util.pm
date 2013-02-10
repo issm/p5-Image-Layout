@@ -2,8 +2,13 @@ package t::Util;
 use strict;
 use warnings;
 use Image::Layout;
+use File::Temp ();
 
-my @exports = qw/new/;
+my @exports = qw/
+    new
+    new_layout
+    tempdir
+/;
 
 sub import {
     my $caller = caller;
@@ -14,5 +19,9 @@ sub import {
 }
 
 sub new { Image::Layout->new(@_) }
+
+sub new_layout { new()->_create_layout(@_) }
+
+sub tempdir { File::Temp::tempdir(@_) }
 
 1;

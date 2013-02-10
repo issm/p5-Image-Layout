@@ -2,9 +2,12 @@ MANIFEST
 Build
 Image-Layout-0.01.tar.gz
 MANIFEST.bak
+MANIFEST.SKIP.bak
+META.json
 META.yml
 Makefile.PL
 _build/
 blib/
 MYMETA.json
 MYMETA.yml
+/tmp

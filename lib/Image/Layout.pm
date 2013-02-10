@@ -2,14 +2,99 @@ package Image::Layout;
 use 5.008;
 use strict;
 use warnings;
+use parent 'Image::Layout::LayoutInterface';
+use Image::Layout::Util;
+use Image::Layout::Settings;
+use Image::Layout::Types qw/Measure Unit Color/;
+use MouseX::Types::Mouse qw/Undef Bool Int Num Str ArrayRef HashRef Any/;
+use Try::Tiny;
+use Class::Accessor::Lite (
+    new => 0,
+    rw  => [qw//],
+);
 
 our $VERSION = '0.00_01';
+our $CONVERT = '/usr/bin/env convert';
 
 sub new {
     my ($class, %params) = @_;
+    my $v = validator(
+        dpi     => { isa => Int, default => 72 },
+        measure => { isa => Measure, default => 'px' },
+        width   => { isa => Int, default => 0 },
+        height  => { isa => Int, default => 0 },
+        bgcolor => { isa => Color, optional => 1 },
+        quality => { isa => Int, default => 90 },
+        font    => { isa => Str, optional => 1 },
+    );
+    my $p = $v->validate(\%params);
     my $self = bless {}, $class;
+    return $self->_init(%$p);
+}
+
+sub _init {
+    my ($self, %params) = @_;
+
+    my $settings = Image::Layout::Settings->new(
+        dpi     => $params{dpi},
+        measure => $params{measure},
+        width   => $params{width},
+        height  => $params{height},
+        bgcolor => $params{bgcolor},
+        quality => $params{quality},
+        font    => $params{font},
+    );
+    $self->settings($settings);
+    $settings->width( $self->to_px( $params{width} ) );
+    $settings->height( $self->to_px( $params{height} ) );
+
+    $self->_layouts( [] );
+    $self->pos( [0, 0] );
+    $self->parent_pos( [0, 0] );
     return $self;
 }
+
+sub _generate_cmd {
+    my ($self, $file) = @_;
+    my @cmds = $self->dump();
+    push @cmds, $file;
+    my $cmd = join "\n", @cmds;
+    $cmd =~ s/[\n\s]+/ /g;
+    return $cmd;
+}
+
+sub compose {
+    my $self = shift;
+    my $s = $self->settings;
+    my @cmd;
+    push @cmd, << "    ...";
+        $CONVERT
+            -colorspace RGB
+            -quality @{[$s->quality]}
+            -density @{[$s->dpi]}x@{[$s->dpi]}
+            -size @{[$s->width]}x@{[$s->height]}
+            canvas:@{[ $s->bgcolor || 'none' ]}
+    ...
+    return @cmd;
+}
+
+sub save {
+    my ($self, %params) = @_;
+    my $v = validator(
+        file     => { isa => Str },
+        show_cmd => { isa => Int, default => 0 },
+    );
+    my $p = $v->validate(\%params);
+
+    my $cmd = $self->_generate_cmd($p->{file});
+    if ( my $col = $p->{show_cmd} ) {
+        warn "[${col}m$cmd[0m";
+    }
+    my $code = system($cmd);
+
+    # use Data::Dumper; warn Dumper \@cmds;
+}
+
 
 1;
 __END__
