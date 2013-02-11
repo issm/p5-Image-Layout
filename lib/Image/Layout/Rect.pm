@@ -53,6 +53,8 @@ sub compose {
     my ($w, $h) = ($self->width, $self->height);
 
     push @cmd, << "    ...";
+        -stroke none
+        -strokewidth 0
         -fill '@{[$self->bgcolor]}'
         -gravity none
         -draw 'rectangle $x,$y @{[$x + $w]},@{[$y + $h]}'
