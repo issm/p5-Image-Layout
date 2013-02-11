@@ -11,13 +11,10 @@ use Image::Size ();
 use Encode;
 use Class::Load qw/:all/;
 use Class::Accessor::Lite (
-    rw => [qw/file width height keep_aspect h_origin v_origin
+    rw => [qw/file width height keep_aspect
               _tmpfiles
              /],
 );
-
-my %origin_map_h = ( left => 'West', center => 'Center', right => 'East' );
-my %origin_map_v = ( top => 'North', middle => 'Center', bottom => 'South' );
 
 sub DESTROY {
     my $self = shift;
@@ -27,14 +24,14 @@ sub DESTROY {
 }
 
 sub extra_validation_rule {
+    my $self = shift;
     return (
         file         => { isa => Str, optional => 1, xor => 'url' },
         url          => { isa => Str, optional => 1, xor => 'file' },
         width        => { isa => Unit },
         height       => { isa => Unit },
         keep_aspect  => { isa => Int, default => 3 },
-        h_origin     => { isa => Str, default => 'left' },
-        v_origin     => { isa => Str, default => 'top' },
+        $self->SUPER::extra_validation_rule(),
     );
     # parameter "keep_aspect"
     #   1: based on width
@@ -48,8 +45,8 @@ sub init {
     $self->width( $self->to_px($params{width}) );
     $self->height( $self->to_px($params{height}) );
     $self->keep_aspect( $params{keep_aspect} );
-    $self->h_origin( $origin_map_h{ $params{h_origin} } || 'West' );
-    $self->v_origin( $origin_map_v{ $params{v_origin} } || 'North' );
+    $self->h_origin( $params{h_origin} );
+    $self->v_origin( $params{v_origin} );
     $self->_tmpfiles( [] );
 
     my $file;
@@ -123,14 +120,13 @@ sub compose {
     my ($x, $y) = @{$self->pos};
     my ($w, $h) = ($self->width, $self->height);
     my $file = $self->file;
-    ( my $origin = $self->v_origin . $self->h_origin ) =~ s/(^Center|Center$)//;
-
+    my $gravity = $self->_origin2gravity();
 
 #        -geometry ${w}x${h}+${x}+${y}
     push @cmd, << "    ...";
         $file
         -geometry +${x}+${y}
-        -gravity $origin
+        -gravity $gravity
         -composite
     ...
 

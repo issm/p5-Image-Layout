@@ -54,6 +54,7 @@ sub compose {
 
     push @cmd, << "    ...";
         -fill '@{[$self->bgcolor]}'
+        -gravity none
         -draw 'rectangle $x,$y @{[$x + $w]},@{[$y + $h]}'
     ...
 

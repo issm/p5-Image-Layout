@@ -9,12 +9,14 @@ use Class::Accessor::Lite (
 );
 
 sub extra_validation_rule {
+    my $self = shift;
     return (
         font         => { isa => Str, optional => 1 },
         size         => { isa => Unit, default => '1px' },
         color        => { isa => Color, default => '#000000' },
         border_width => { isa => Unit, default => 0 },
         border_color => { isa => Color, default => '#ffffff' },
+        $self->SUPER::extra_validation_rule(),
     );
 }
 
@@ -25,6 +27,8 @@ sub init {
     $self->color( $params{color} );
     $self->border_width( $self->to_px($params{border_width}) );
     $self->border_color( $params{border_color} );
+    $self->h_origin( $params{h_origin} );
+    $self->v_origin( $params{v_origin} );
 }
 
 sub compose {
@@ -35,6 +39,8 @@ sub compose {
     my $text = $self->content;
     $text = ''  if ! defined $text;
     $text =~ s/"/\\"/g;
+
+    my $gravity = $self->_origin2gravity();
 
     if ( $self->border_width ) {
         push @cmd, << "        ...";
@@ -57,6 +63,7 @@ sub compose {
         -pointsize @{[$self->size / $s->_pt2px_rate]}
         -fill '@{[$self->color]}'
         -encoding Unicode
+        -gravity $gravity
         -draw 'text $x,$y \"$text\"'
     ...
 

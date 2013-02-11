@@ -28,8 +28,6 @@ sub new {
     return $self;
 }
 
-sub extra_validation_rule { () }
-
 sub _init {
     my ($self, %params) = @_;
     $self->_layouts( [] );

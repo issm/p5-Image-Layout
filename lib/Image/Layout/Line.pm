@@ -43,6 +43,7 @@ sub compose {
     my $cmd = << "    ...";
         -stroke '@{[$self->color]}'
         -strokewidth '@{[$self->size]}'
+        -gravity none
         -draw 'line $x0,$y0 $x1,$y1'
     ...
 
