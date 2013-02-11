@@ -1,12 +1,14 @@
 package Image::Layout::Image;
 use strict;
 use warnings;
+use utf8;
 use parent 'Image::Layout::Base';
 use Image::Layout::Types qw/Unit Position Color/;
 use MouseX::Types::Mouse qw/Bool Int Str/;
 use File::Copy ();
 use File::Temp ();
 use Image::Size ();
+use Encode;
 use Class::Load qw/:all/;
 use Class::Accessor::Lite (
     rw => [qw/file width height keep_aspect h_origin v_origin
@@ -102,7 +104,7 @@ sub init {
             $resize_geom = "${w}x${h}!";
         }
 
-        my $cmd = << "        ...";
+        my $cmd = encode_utf8( << "        ..." );
             $Image::Layout::CONVERT $file -resize $resize_geom $tmpfile
         ...
         #warn "[33m$cmd[0m";

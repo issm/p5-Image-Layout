@@ -2,12 +2,14 @@ package Image::Layout;
 use 5.008;
 use strict;
 use warnings;
+use utf8;
 use parent 'Image::Layout::LayoutInterface';
 use Image::Layout::Util;
 use Image::Layout::Settings;
 use Image::Layout::Types qw/Measure Unit Color/;
 use MouseX::Types::Mouse qw/Undef Bool Int Num Str ArrayRef HashRef Any/;
 use Try::Tiny;
+use Encode;
 use Class::Accessor::Lite (
     new => 0,
     rw  => [qw//],
@@ -86,7 +88,7 @@ sub save {
     );
     my $p = $v->validate(\%params);
 
-    my $cmd = $self->_generate_cmd($p->{file});
+    my $cmd = encode_utf8( $self->_generate_cmd($p->{file}) );
     if ( my $col = $p->{show_cmd} ) {
         warn "[${col}m$cmd[0m";
     }
