@@ -50,4 +50,6 @@ sub _init {
 
 sub init { shift }
 
+sub compose { () }
+
 1;
