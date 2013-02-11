@@ -11,8 +11,22 @@ use Carp;
 use Class::Load ();
 use Class::Accessor::Lite (
     new => 0,
-    rw => [qw/settings pos parent_pos _layouts/],
+    rw => [qw/settings pos parent_pos
+              h_origin v_origin
+              _layouts/],
 );
+
+my %origin_map = (
+    h => { left => 'West', center => 'Center', right => 'East' },
+    v => { top => 'North', middle => 'Center', bottom => 'South' },
+);
+
+sub extra_validation_rule {
+    return (
+        h_origin => { isa => Str, default => 'left' },
+        v_origin => { isa => Str, default => 'top' },
+    );
+}
 
 sub to_px {
     my ($self, @args) = @_;
@@ -54,6 +68,19 @@ sub _pt {
     my $v = validator( pt => Num )->with('StrictSequenced');
     my $p = $v->validate(@args);
     return int( $p->{pt} * $self->settings->_pt2px_rate );
+}
+
+sub _origin2gravity {
+    my $self = shift;
+    my $ret = '';
+    my ($h, $v) = (
+        $origin_map{h}{ $self->h_origin || '' } || 'West',
+        $origin_map{v}{ $self->v_origin || '' } || 'North',
+    );
+    $ret .= $v  if $v;
+    $ret .= $h  if $h;
+    $ret =~ s/(^Center|Center$)//;
+    return $ret || 'none';
 }
 
 sub _create_layout {
