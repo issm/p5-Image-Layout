@@ -26,8 +26,8 @@ sub DESTROY {
 sub extra_validation_rule {
     my $self = shift;
     return (
-        file         => { isa => Str, optional => 1, xor => 'url' },
-        url          => { isa => Str, optional => 1, xor => 'file' },
+        file         => { isa => Str, xor => 'url' },
+        url          => { isa => Str, xor => 'file' },
         width        => { isa => Unit },
         height       => { isa => Unit },
         keep_aspect  => { isa => Int, default => 3 },
@@ -69,7 +69,8 @@ sub init {
             warn 'IO::Socket::SSL is not available.';
         }
         my $ua = Furl->new(%params_ua);
-        my $res = $ua->get( $params{url} );
+        my $url = encode_utf8( $params{url} );
+        my $res = $ua->get($url);
         if ( $res->code != 200 ) {
             die 'filed to fetch image: ' . $res->status_line;
         }
