@@ -34,8 +34,7 @@ sub compose {
     my ($x, $y) = @{$self->pos};
     my $text = $self->content;
     $text = ''  if ! defined $text;
-    # escape!
-    # TODO: '"' を含んでいるときの対策！
+    $text =~ s/"/\\"/g;
 
     if ( $self->border_width ) {
         push @cmd, << "        ...";
