@@ -30,6 +30,6 @@ subtype Position,
 
 subtype Color,
     as Str,
-    where { /^#[0-9a-f]{6}$/i } ;
+    where { /^#(?:[0-9a-f]{6}|[0-9a-f]{8})$/i } ;
 
 1;
