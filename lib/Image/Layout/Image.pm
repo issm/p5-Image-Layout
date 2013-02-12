@@ -90,7 +90,6 @@ sub init {
     my (undef, $tmpfile) = File::Temp::tempfile( UNLINK => 0 );  ## remove on DESTROY
     {
         my ($w, $h) = ($self->width, $self->height);
-        my $r = $self->rotate;
         my $resize_geom = '';
 
         if ( my $ka = $self->keep_aspect ) {
