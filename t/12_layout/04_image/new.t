@@ -8,6 +8,7 @@ use Try::Tiny;
 use File::Basename;
 use Class::Load qw/:all/;
 use Encode;
+use Image::Size qw/imgsize/;
 
 my $dir = dirname(__FILE__);
 
@@ -158,6 +159,51 @@ subtest 'image url: https' => sub {
             fail 'should not have error.';
         };
     };
+};
+
+subtest 'image size' => sub {
+    for my $v ( 0 .. 4 ) {
+        subtest "keep_aspect: $v" => sub {
+            my %p = (
+                type        => 'Image',
+                file        => "$dir/test.jpg",
+                keep_aspect => $v,
+            );
+
+            my $l;
+            my ($w, $h);
+
+            $l = new()->add_layout(
+                %p,
+                width  => 200,
+                height => 50,
+            )->_layouts->[0];
+
+            ($w, $h) = imgsize( $l->file );
+            is $l->width, $w;
+            is $l->height, $h;
+
+            $l = new()->add_layout(
+                %p,
+                width  => 50,
+                height => 200,
+            )->_layouts->[0];
+
+            ($w, $h) = imgsize( $l->file );
+            is $l->width, $w;
+            is $l->height, $h;
+
+            $l = new()->add_layout(
+                %p,
+                width  => 50,
+                height => 50,
+            )->_layouts->[0];
+
+            ($w, $h) = imgsize( $l->file );
+            is $l->width, $w;
+            is $l->height, $h;
+        };
+    }
 };
 
 done_testing;

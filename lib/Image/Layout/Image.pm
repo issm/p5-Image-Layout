@@ -109,6 +109,10 @@ sub init {
         my $code = system($cmd);
 
         push @{$self->_tmpfiles}, $tmpfile;
+
+        ($w, $h) = Image::Size::imgsize($tmpfile);
+        $self->width($w);
+        $self->height($h);
     }
 
     $self->file( $tmpfile );
