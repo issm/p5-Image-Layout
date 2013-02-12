@@ -60,8 +60,9 @@ sub _generate_cmd {
     my ($self, $file) = @_;
     my @cmds = $self->dump();
     push @cmds, $file;
-    my $cmd = join "\n", @cmds;
+    ( my $cmd = join "\n", @cmds ) =~ s/(^\s*|\s*$)//g;;
     $cmd =~ s/[\n\s]+/ /g;
+    $cmd =~ s/([\(\)])/\\$1/g;  # escape '(' and ')'
     return $cmd;
 }
 
