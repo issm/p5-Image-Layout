@@ -103,7 +103,7 @@ sub init {
         }
 
         my $cmd = encode_utf8( << "        ..." );
-            $Image::Layout::CONVERT $file -resize $resize_geom $tmpfile
+            $Image::Layout::CONVERT $file -quality 100 -resize $resize_geom $tmpfile
         ...
         #warn "[33m$cmd[0m";
         my $code = system($cmd);
