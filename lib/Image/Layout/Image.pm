@@ -4,14 +4,14 @@ use warnings;
 use utf8;
 use parent 'Image::Layout::Base';
 use Image::Layout::Types qw/Unit Position Color/;
-use MouseX::Types::Mouse qw/Bool Int Str/;
+use MouseX::Types::Mouse qw/Bool Int Num Str/;
 use File::Copy ();
 use File::Temp ();
 use Image::Size ();
 use Encode;
 use Class::Load qw/:all/;
 use Class::Accessor::Lite (
-    rw => [qw/file width height keep_aspect
+    rw => [qw/file width height keep_aspect rotate bgcolor
               _tmpfiles
              /],
 );
@@ -31,6 +31,8 @@ sub extra_validation_rule {
         width        => { isa => Unit },
         height       => { isa => Unit },
         keep_aspect  => { isa => Int, default => 3 },
+        rotate       => { isa => Num, default => 0 },
+        bgcolor      => { isa => Color, default => '#00000000' },
         $self->SUPER::extra_validation_rule(),
     );
     # parameter "keep_aspect"
@@ -45,6 +47,8 @@ sub init {
     $self->width( $self->to_px($params{width}) );
     $self->height( $self->to_px($params{height}) );
     $self->keep_aspect( $params{keep_aspect} );
+    $self->rotate( $params{rotate} );
+    $self->bgcolor( $params{bgcolor} );
     $self->h_origin( $params{h_origin} );
     $self->v_origin( $params{v_origin} );
     $self->_tmpfiles( [] );
@@ -86,6 +90,7 @@ sub init {
     my (undef, $tmpfile) = File::Temp::tempfile( UNLINK => 0 );  ## remove on DESTROY
     {
         my ($w, $h) = ($self->width, $self->height);
+        my $r = $self->rotate;
         my $resize_geom = '';
 
         if ( my $ka = $self->keep_aspect ) {
@@ -102,9 +107,11 @@ sub init {
             $resize_geom = "${w}x${h}!";
         }
 
+
         my $cmd = encode_utf8( << "        ..." );
             $Image::Layout::CONVERT $file -quality 100 -resize $resize_geom $tmpfile
         ...
+            $cmd =~ s/[\n\s]+/ /g;
         #warn "[33m$cmd[0m";
         my $code = system($cmd);
 
@@ -124,14 +131,19 @@ sub compose {
     my $s = $self->settings;
     my ($x, $y) = @{$self->pos};
     my ($w, $h) = ($self->width, $self->height);
+    my $r = $self->rotate;
+    my $bgcolor = $self->bgcolor;
     my $file = $self->file;
     my $gravity = $self->_origin2gravity();
 
-#        -geometry ${w}x${h}+${x}+${y}
     push @cmd, << "    ...";
-        $file
-        -geometry +${x}+${y}
-        -gravity $gravity
+        (
+            $file
+            -geometry +${x}+${y}
+            -gravity $gravity
+            -background '${bgcolor}'
+            -rotate $r
+        )
         -composite
     ...
 
