@@ -108,11 +108,14 @@ sub init {
 
 
         my $cmd = encode_utf8( << "        ..." );
-            $Image::Layout::CONVERT $file -quality 100 -resize $resize_geom $tmpfile
+            $Image::Layout::CONVERT "$file" -quality 100 -resize $resize_geom "$tmpfile"
         ...
             $cmd =~ s/[\n\s]+/ /g;
         #warn "[33m$cmd[0m";
         my $code = system($cmd);
+        if ( $code != 0 ) {
+            die qq{could not layout image: "$file"};
+        }
 
         push @{$self->_tmpfiles}, $tmpfile;
 

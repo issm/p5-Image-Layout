@@ -88,6 +88,55 @@ subtest 'image file' => sub {
             fail 'should not have errors';
         };
     };
+
+    subtest 'path includes "spaces"' => sub {
+        my $tempdir = tempdir();
+
+        subtest 'file' => sub {
+            try {
+                my $l =new()->add_layout(
+                    type   => 'Image',
+                    width  => 100,
+                    height => 100,
+                    file   => "$dir/test test.jpg",
+                )->_layouts->[0];
+                isa_ok $l, 'Image::Layout::Image';
+            } catch {
+                warn shift;
+                fail 'should not have errors';
+            };
+        };
+
+        subtest 'dir' => sub {
+            try {
+                my $l =new()->add_layout(
+                    type   => 'Image',
+                    width  => 100,
+                    height => 100,
+                    file   => "$dir/foo bar baz/test.jpg",
+                )->_layouts->[0];
+                isa_ok $l, 'Image::Layout::Image';
+            } catch {
+                warn shift;
+                fail 'should not have errors';
+            };
+        };
+
+        subtest 'dir & file' => sub {
+            try {
+                my $l =new()->add_layout(
+                    type   => 'Image',
+                    width  => 100,
+                    height => 100,
+                    file   => "$dir/foo bar baz/test test.jpg",
+                )->_layouts->[0];
+                isa_ok $l, 'Image::Layout::Image';
+            } catch {
+                warn shift;
+                fail 'should not have errors';
+            };
+        };
+    };
 };
 
 subtest 'image url: http' => sub {
