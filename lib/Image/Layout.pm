@@ -17,6 +17,7 @@ use Class::Accessor::Lite (
 
 our $VERSION = '0.00_01';
 our $CONVERT = '/usr/bin/env convert';
+our @LAYOUT_NAMESPACES;
 
 sub new {
     my ($class, %params) = @_;
@@ -64,6 +65,12 @@ sub _generate_cmd {
     $cmd =~ s/[\n\s]+/ /g;
     $cmd =~ s/([\(\)])/\\$1/g;  # escape '(' and ')'
     return $cmd;
+}
+
+sub add_layout_namespace {
+    my ($self, @args) = @_;
+    push @LAYOUT_NAMESPACES, @args;
+    return $self;
 }
 
 sub compose {

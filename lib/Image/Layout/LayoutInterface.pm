@@ -8,7 +8,7 @@ use Image::Layout::Types qw/
 /;
 use MouseX::Types::Mouse qw/Num Int Str ArrayRef HashRef Any/;
 use Carp;
-use Class::Load ();
+use Class::Load qw/try_load_class/;
 use Class::Accessor::Lite (
     new => 0,
     rw => [qw/settings pos parent_pos
@@ -92,10 +92,20 @@ sub _create_layout {
         content => { isa => Any, default => '' },
     )->with('AllowExtra');
     my ($p, %ex) = $v->validate(%params);
-    ( my $layout_class = $p->{type} =~ /^\+/
-        ? $p->{type} : "Image::Layout::$p->{type}"
-    ) =~ s/^\+//;
-    Class::Load::load_class($layout_class);
+
+    my $layout_class;
+    if ( $p->{type} =~ /^\+/ ) {
+        ( $layout_class = $p->{type} ) =~ s/^\+//;
+    }
+    else {
+      FOR_NAMESPACE:
+        for my $ns ( 'Image::Layout', @Image::Layout::LAYOUT_NAMESPACES ) {
+            if ( try_load_class( my $c = "$ns\::$p->{type}" ) ) {
+                $layout_class = $c;
+                last FOR_NAMESPACE;
+            }
+        }
+    }
 
     my %params_layout = (
         settings   => $self->settings,
