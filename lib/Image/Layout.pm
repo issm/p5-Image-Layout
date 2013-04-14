@@ -17,6 +17,7 @@ use Class::Accessor::Lite (
 
 our $VERSION = '0.00_01';
 our $CONVERT = '/usr/bin/env convert';
+our $SSL_VERIFY_NONE = 0;
 our @LAYOUT_NAMESPACES;
 
 sub new {

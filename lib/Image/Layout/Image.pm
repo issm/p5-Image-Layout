@@ -65,8 +65,11 @@ sub init {
             timeout => 10,
         );
         if ( is_class_loaded('IO::Socket::SSL') ) {
+            my $ssl_verify_mode = $Image::Layout::SSL_VERIFY_NONE
+                ? IO::Socket::SSL::SSL_VERIFY_NONE()
+                : IO::Socket::SSL::SSL_VERIFY_PEER();
             $params_ua{ssl_opts} = {
-                SSL_verify_mode => IO::Socket::SSL::SSL_VERIFY_PEER(),
+                SSL_verify_mode => $ssl_verify_mode,
             },
         }
         else {
