@@ -1,5 +1,8 @@
 Revision history for Image-Layout
 
+0.00_03  2013-09-11T11:32
+         * content of Image::Layout::Text escapes from escaping. GH #17
+
 0.00_02  2013-04-14T13:30
          * $Image::Layout::SSL_VERIFY_MODE = 1 lets "ssl verify mode"
            of internal user agent set IO::Socket::SSL::SSL_VERIFY_NONE()
