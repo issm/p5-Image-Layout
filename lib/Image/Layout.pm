@@ -64,7 +64,11 @@ sub _generate_cmd {
     push @cmds, qq{"$file"};
     ( my $cmd = join "\n", @cmds ) =~ s/(^\s*|\s*$)//g;;
     $cmd =~ s/[\n\s]+/ /g;
-    $cmd =~ s/([\(\)])/\\$1/g;  # escape '(' and ')'
+    my ($stx, $etx) = ("\2", "\3");
+    my @v = $cmd =~ /${stx}(.*?)${etx}/g;           # let "${stx}...${etx}" escape from escaping
+    $cmd =~ s/${stx}(.*?)${etx}/${stx}<?>{$etx}/g;  # placeholding
+    $cmd =~ s/([\(\)])/\\$1/g;                      # escape '(' and ')'
+    $cmd =~ s/${stx}<\?>{$etx}/shift @v/egx;
     return $cmd;
 }
 
