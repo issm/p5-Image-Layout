@@ -64,7 +64,7 @@ sub compose {
         -fill '@{[$self->color]}'
         -encoding Unicode
         -gravity $gravity
-        -draw 'text $x,$y \"$text\"'
+        -draw 'text $x,$y \"\2$text\3\"'
     ...
 
     return @cmd;
