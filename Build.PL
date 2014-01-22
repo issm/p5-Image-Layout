@@ -38,6 +38,7 @@ my $builder = Module::Build->subclass(
         'Test::Deep'            => '0.110',
         'Try::Tiny'             => '0.12',
         'Furl'                  => '2.03',
+        'URI'                   => '1.60',
         'Image::Size'           => '3.232',
     },
     add_to_cleanup     => [ 'Image-Layout-*' ],

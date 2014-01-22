@@ -9,6 +9,7 @@ use File::Copy ();
 use File::Temp ();
 use Image::Size ();
 use Encode;
+use URI;
 use Class::Load qw/:all/;
 use Class::Accessor::Lite (
     rw => [qw/file width height keep_aspect rotate bgcolor
@@ -76,7 +77,7 @@ sub init {
             warn 'IO::Socket::SSL is not available.';
         }
         my $ua = Furl->new(%params_ua);
-        my $url = encode_utf8( $params{url} );
+        my $url = URI->new( $params{url} );
         my $res = $ua->get($url);
         if ( $res->code != 200 ) {
             die 'filed to fetch image: ' . $res->status_line;
