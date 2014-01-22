@@ -15,7 +15,7 @@ use Class::Accessor::Lite (
     rw  => [qw//],
 );
 
-our $VERSION = '0.00_03';
+our $VERSION = '0.00_04';
 our $CONVERT = '/usr/bin/env convert';
 our $SSL_VERIFY_NONE = 0;
 our @LAYOUT_NAMESPACES;

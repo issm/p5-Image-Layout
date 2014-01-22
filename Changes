@@ -1,5 +1,8 @@
 Revision history for Image-Layout
 
+0.00_04  2014-01-22T19:25
+         * Image::Layout::Image escapes URI. GH #18
+
 0.00_03  2013-09-11T11:32
          * content of Image::Layout::Text escapes from escaping. GH #17
 
